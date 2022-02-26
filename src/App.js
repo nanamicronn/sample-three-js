@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import "./App.css";
 
-function App() {
+function MyRotatingBox() {
+  const myMesh = React.useRef();
+  const [active, setActive] = useState(false);
+
+  useFrame(({ clock }) => {
+    const a = clock.getElapsedTime();
+    myMesh.current.rotation.x = a;
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <mesh
+      scale={active ? 1.5 : 1}
+      onClick={() => setActive(!active)}
+      ref={myMesh}
+    >
+      <boxBufferGeometry />
+      <meshPhongMaterial color="royalblue" />
+    </mesh>
   );
 }
 
-export default App;
+export const App = () => {
+  return (
+    <div className="App">
+      <Canvas>
+        <MyRotatingBox />
+        <ambientLight intensity={0.1} />
+        <directionalLight />
+      </Canvas>
+    </div>
+  );
+}
